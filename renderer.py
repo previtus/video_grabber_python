@@ -8,12 +8,13 @@ class renderer(object):
     Draw image to screen.
     """
 
-    def __init__(self, video_capture):
+    def __init__(self, video_capture, openface_handler):
         # Init stuff
 
         self.video_capture = video_capture
+        self.openface_handler = openface_handler
 
-        self.sample_every = 0.1 # sec
+        self.sample_every = 1 # sec
 
 
         return None
@@ -45,7 +46,7 @@ class renderer(object):
 
 
 
-"""
+    """
     def record_frames(self):
 
         # Define the codec and create VideoWriter object
@@ -67,4 +68,35 @@ class renderer(object):
                 break
 
         out.release()
-"""
+    """
+
+    def runopenface_on_frames(self, show=True):
+        time_start = timer()
+        while (True):
+            key = cv2.waitKey(1)
+            if key == ord('q'):
+                break
+            if key == ord('8'):
+                self.sample_every /= 2.0
+            if key == ord('2'):
+                self.sample_every *= 2.0
+
+            ret, frame, fps = self.video_capture.get_frame()
+
+            time_now = timer()
+            if (time_now - time_start) > self.sample_every:
+                time_start = time_now
+
+                # HERE DO SOMETHING WITH THE IMAGE (every self.sample_every sec)
+                passed, rep, bb = self.openface_handler.getRep(frame)
+                if passed:
+                    print(rep)
+                    cv2.rectangle(frame, (bb.left(), bb.top()), (bb.right(), bb.bottom()), (255, 0, 0), 2)
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+
+            cv2.putText(frame, "FPS "+'{:.2f}'.format(fps)+", sample rate "+'{:.3f}'.format(self.sample_every), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+
+            if show:
+                cv2.imshow('frame', frame)
+

@@ -1,5 +1,4 @@
 import cv2
-import numpy as np
 from timeit import default_timer as timer
 
 class video_capture(object):
