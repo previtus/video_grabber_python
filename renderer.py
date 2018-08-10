@@ -12,18 +12,37 @@ class renderer(object):
         # Init stuff
 
         self.video_capture = video_capture
+
+        self.sample_every = 0.1 # sec
+
+
         return None
 
     def show_frames(self):
+        time_start = timer()
         while (True):
+            key = cv2.waitKey(1)
+            if key == ord('q'):
+                break
+            if key == ord('8'):
+                self.sample_every /= 2
+            if key == ord('2'):
+                self.sample_every *= 2
+
             ret, frame, fps = self.video_capture.get_frame()
 
             #gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            cv2.putText(frame, "FPS "+'{:.2f}'.format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+            cv2.putText(frame, "FPS "+'{:.2f}'.format(fps)+", sample rate "+'{:.3f}'.format(self.sample_every), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+
+            time_now = timer()
+            if (time_now - time_start) > self.sample_every:
+                time_start = time_now
+
+                # HERE DO SOMETHING WITH THE IMAGE (every self.sample_every sec)
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
             cv2.imshow('frame', frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+
 
 
 """
