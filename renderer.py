@@ -14,22 +14,9 @@ class renderer(object):
         self.video_capture = video_capture
         return None
 
-    def show_frames_Thread(self):
-        self.video_capture.start()
+    def show_frames(self):
         while (True):
-            frame, fps = self.video_capture.read()
-
-            cv2.putText(frame, "FPS "+'{:.2f}'.format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-
-            # check to see if the frame should be displayed to our screen
-            cv2.imshow("Frame", frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
-
-    def show_frames_Direct(self):
-        while (True):
-            ret, frame, fps = self.video_capture.get_frame_direct()
+            ret, frame, fps = self.video_capture.get_frame()
 
             #gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             cv2.putText(frame, "FPS "+'{:.2f}'.format(fps), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
