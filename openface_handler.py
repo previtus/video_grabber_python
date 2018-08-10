@@ -47,3 +47,28 @@ class openface_handler(object):
             return False, None, None
         rep = self.net.forward(alignedFace)
         return True, rep, bb
+
+    def getRepMulti(self, rgbImg):
+        bbs = self.align.getAllFaceBoundingBoxes(rgbImg)
+
+        if len(bbs) is 0:
+            print("Unable to find a face.")
+            return [False], [None], [None]
+
+        successes = []
+        reps = []
+        for bb in bbs:
+            # aligned crop of image with the size of self.imgDim
+            alignedFace = self.align.align(self.imgDim, rgbImg, bb, landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
+
+            if alignedFace is None:
+                print("Unable to align image.")
+
+                successes.append(False)
+            else:
+                successes.append(True)
+
+            rep = self.net.forward(alignedFace)
+            reps.append(rep)
+
+        return successes, reps, bbs
