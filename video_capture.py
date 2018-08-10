@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 from timeit import default_timer as timer
-import datetime
 
 class video_capture(object):
     """
@@ -13,12 +12,12 @@ class video_capture(object):
         self.capture_handle = cv2.VideoCapture(src)
 
     def get_frame(self):
-        start = datetime.datetime.now()
+        time_start = timer()
 
         ret, frame = self.capture_handle.read()
 
-        end = datetime.datetime.now()
-        fps = 1.0 / (end - start).total_seconds()
+        time_end = timer()
+        fps = 1.0 / (time_end - time_start)
         return ret, frame, fps
 
     def destroy(self):
